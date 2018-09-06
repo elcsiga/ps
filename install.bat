@@ -1,0 +1,1 @@
+cd server && npm install && cd ..\ui && npm install && cd .. && pause
