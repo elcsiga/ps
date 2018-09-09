@@ -4,18 +4,15 @@ import * as cors from 'cors';
 import {setupDb} from './db';
 import {makeExecutableSchema} from 'graphql-tools';
 import {typeDefs} from './graphql/typedefs';
-import {Names, Resolvers} from "./graphql/resolvers";
+import {setupResolvers} from "./graphql/resolvers";
+import {testDB} from "./test";
 
 setupDb()
     .then(db => {
 
-        const resolvers = new Resolvers(db)
-            .addResolvers(new Names('project'))
-            .getResolvers();
-
         const schema = makeExecutableSchema({
             typeDefs: typeDefs,
-            resolvers: resolvers
+            resolvers: setupResolvers(db)
         });
 
         // SERVER
@@ -35,6 +32,8 @@ setupDb()
         const port = 3000;
         console.log(`Listening on ${port}`);
         app.listen(port);
+
+        testDB(db, app);
 
     })
     .catch(error => console.log('DB error', error));

@@ -1,79 +1,53 @@
-import {Collection, Db, InsertOneWriteOpResult, ObjectId} from 'mongodb';
+import {Functions, Names, Resolvers} from "./resolver";
+import {Db} from "mongodb";
 
 
-export class Names {
+export function setupResolvers(db: Db): any {
 
-    static capitalizeFirstLetter = (s:string) => s.charAt(0).toUpperCase() + s.slice(1);
+    const resolvers = new Resolvers(db);
 
-    constructor(
-        public key: string,
-        public plural: string = key + 's',
-        public add: string = 'add' + Names.capitalizeFirstLetter(key),
-    ) {}
-}
+    resolvers.addResolvers(
+        new Names('project'),
+        new Functions()
+            .set('insertPayload', (args) => ({ ...args.project, participants: [] }) ),
+        'CRUDL'
+    );
 
-export class Functions {
-    constructor(
-        public add = (key, args) => args[key] // e.g. addProject(project: ProjectInput!): Project
-    ) {}
-}
+    resolvers.addResolvers(
+        new Names('partner'),
+        new Functions()
+            .set('insertPayload', (args) => ({ ...args.partner, participants: [], users: [] }) ),
+        'CRUDL'
+    );
 
-export class Resolvers {
+    resolvers.addResolvers(
+        new Names('user'),
+        new Functions()
+            .set('insertPayload', (args) => ({ ...args.user, partnerId: args.partnerId }) ),
+        'CRUDL'
+    );
 
-    private queryResolvers = {};
-    private mutationResolvers = {};
+    resolvers.addJoin(
+        new Names('partner'),
+        new Names('user')
+    );
 
-    constructor( private db: Db ) {
+    resolvers.addResolvers(
+        new Names('participant'),
+        new Functions()
+            .set('insertPayload', (args) => ({ ...args.participant, projectId: args.projectId, partnerId: args.partnerId, documents: [] }) ),
+        'CRUDL'
+    );
 
-    }
+    resolvers.addJoin(
+        new Names('project'),
+        new Names('participant')
+    );
 
-    private getCollection(name: Names): Collection {
-        return this.db.collection(name.plural);
-    }
+    resolvers.addJoin(
+        new Names('partner'),
+        new Names('participant')
+    );
 
-    addListResolver(name: Names) {
-        this.queryResolvers[name.plural] = async (obj, args, context, info) => {
-            const records = await this.getCollection(name).find({}).toArray();
-            return records.map(Resolvers.fromDB);
-        };
-        return this;
-    }
-
-    addEntityResolver(name: Names) {
-        this.queryResolvers[name.key] = async (obj, args, context, info) => {
-            return Resolvers.fromDB( await this.getCollection(name).findOne( new ObjectId(args.id) ));
-        };
-        return this;
-    }
-
-    addInsertOneResolver(name: Names, functions: Functions) {
-        this.mutationResolvers[name.add] = async (obj, args, context, info) => {
-            const payload = functions.add(name.key, args);
-            const result: InsertOneWriteOpResult = await this.getCollection(name).insertOne(payload);
-            return Resolvers.fromDB( result.ops[0] );
-        };
-        return this;
-    }
-
-    addResolvers(name: Names, functions: Functions = new Functions() ) {
-        this.addListResolver(name);
-        this.addEntityResolver(name);
-        this.addInsertOneResolver(name, functions);
-        return this;
-    }
-
-    static fromDB(obj) {
-        return {
-            ...obj,
-            id: obj._id.toString()
-        }
-    }
-
-    getResolvers() {
-        return {
-            Query: this.queryResolvers,
-            Mutation: this.mutationResolvers
-        }
-    }
-
+    return resolvers.getResolvers();
 }
