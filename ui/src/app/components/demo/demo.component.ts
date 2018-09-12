@@ -15,7 +15,7 @@ interface DemoData {
             <h3>Error</h3> {{ error | json }}
         </div>
         <div *ngIf="data">
-            <h3>Success</h3> {{ data | json }}
+            <h3>Success</h3><pre>{{ data | json }}</pre> 
         </div>
     `,
 })
@@ -31,13 +31,17 @@ export class DemoComponent implements OnInit {
         this.apollo
             .watchQuery<DemoData>({
                 query: gql`
-                {
-                    blogposts(limit: 10) {
-                      title
-                      thumbnail
-                      content
+                    {
+                      projects {
+                        name
+                        participants {
+                          role
+                          partner {
+                            name
+                          }
+                        }
+                      }
                     }
-                }
                 `,
             })
             .valueChanges.subscribe(result => {

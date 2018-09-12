@@ -17,6 +17,14 @@
       "es2017",
       "dom",
       "esnext"
-    ]
+    ],
+    "paths": {
+      "kit": [
+        "dist/kit"
+      ],
+      "kit/*": [
+        "dist/kit/*"
+      ]
+    }
   }
 }

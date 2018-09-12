@@ -121,6 +121,46 @@
           }
         }
       }
+    },
+    "kit": {
+      "root": "projects/kit",
+      "sourceRoot": "projects/kit/src",
+      "projectType": "library",
+      "prefix": "kit",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-ng-packagr:build",
+          "options": {
+            "tsConfig": "projects/kit/tsconfig.lib.json",
+            "project": "projects/kit/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "project": "projects/kit/ng-package.prod.json"
+            }
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/kit/src/test.ts",
+            "tsConfig": "projects/kit/tsconfig.spec.json",
+            "karmaConfig": "projects/kit/karma.conf.js"
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "projects/kit/tsconfig.lib.json",
+              "projects/kit/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**"
+            ]
+          }
+        }
+      }
     }
   },
   "defaultProject": "ps-ui"
