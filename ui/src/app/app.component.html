@@ -1,6 +1,10 @@
 Apollo demo
-<app-demo></app-demo>
 
-<button kitButton> DEMO </button>
-
-<kit-data-container></kit-data-container>
+<kit-data-container
+    [input]="projects$"
+    [dataTemplate]="dataTemplate"
+>
+    <ng-template #dataTemplate let-data="data">
+        <pre>{{ data | json }}</pre>
+    </ng-template>
+</kit-data-container>

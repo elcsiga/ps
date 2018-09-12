@@ -1,3 +1,15 @@
-<p>
-  data-container works!
-</p>
+<div *ngIf="input | async as i; else noInput">
+    <div *ngIf="i.loading">
+        <h3>Still loading ...</h3>
+    </div>
+    <div *ngIf="i.error">
+        <h3>Error</h3> {{ i.error | json }}
+    </div>
+    <div *ngIf="i.data">
+        <ng-container *ngTemplateOutlet="dataTemplate; context: {data: i.data}"></ng-container>
+    </div>
+</div>
+
+<ng-template #noInput>
+    <h3>Loading ...</h3>
+</ng-template>
