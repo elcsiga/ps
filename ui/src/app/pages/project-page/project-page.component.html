@@ -1,0 +1,19 @@
+<h1>
+    <a [routerLink]="['/projects']">Projects</a>
+</h1>
+
+<kit-data-container
+    [input]="projects$"
+    [dataTemplate]="dataTemplate"
+>
+    <ng-template #dataTemplate let-data="data">
+        <div class='project-list'>
+            <div *ngFor="let project of getUnifiedProjectList(data); trackBy: trackById"
+                 class='project-item'
+                 [@flyInOut]
+            >
+                <a [routerLink]="['/project', project.id]">{{project.name}}</a>
+            </div>
+        </div>
+    </ng-template>
+</kit-data-container>

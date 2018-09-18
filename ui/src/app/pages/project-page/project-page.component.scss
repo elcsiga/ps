@@ -1,0 +1,19 @@
+
+
+.project-list {
+    padding: 10px;
+    background-color: #eee;
+
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+
+.project-item {
+    padding: 10px;
+    background-color: #fff;
+
+    flex: 0 1 calc(30% - 1em);
+}
+

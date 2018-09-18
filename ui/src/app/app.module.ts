@@ -5,17 +5,25 @@ import {AppComponent} from './app.component';
 import {ApolloBoost, ApolloBoostModule} from 'apollo-angular-boost';
 import {HttpClientModule} from '@angular/common/http';
 import {KitButtonModule, KitDataContainerModule} from "kit";
+import { ProjectListComponent } from './components/project-list/project-list.component';
+import { AppRoutingModule } from './/app-routing.module';
+import { ProjectPageComponent } from './pages/project-page/project-page.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
     declarations: [
-        AppComponent
+        AppComponent,
+        ProjectListComponent,
+        ProjectPageComponent
     ],
     imports: [
         BrowserModule,
+        BrowserAnimationsModule,
         HttpClientModule,
         ApolloBoostModule,
         KitButtonModule,
-        KitDataContainerModule
+        KitDataContainerModule,
+        AppRoutingModule
     ],
     providers: [],
     bootstrap: [AppComponent]
